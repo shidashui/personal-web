@@ -1,3 +1,25 @@
+from datetime import datetime
+
+from flask import current_app
+from flask_avatars import Identicon
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from models.main import Photo
+from sites.extensions import whooshee, db
+
+
+#用户关注第三张表
+class Follow(db.Model):
+    follower_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    followed_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    follower = db.relationship('User', foreign_keys=[follower_id], back_populates='following', lazy='joined')
+    followed = db.relationship('User', foreign_keys=[followed_id], back_populates='followers', lazy='joined')
+
+
+@whooshee.register_model('username', 'name')
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, index=True)
@@ -141,3 +163,55 @@ class User(db.Model, UserMixin):
     def unblock(self):
         self.active = True
         db.session.commit()
+
+
+
+#权限管理(RBAC)
+roles_permissions = db.Table('roles_permissions',
+                            db.Column('role_id', db.Integer, db.ForeignKey('role.id')),
+                            db.Column('permission_id',db.Integer,db.ForeignKey('permission.id'))
+                            )
+
+class Permission(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(30), unique=True)
+    roles = db.relationship('Role', secondary=roles_permissions, back_populates='permissions')
+
+class Role(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(30), unique=True)
+    users = db.relationship('User', back_populates='role')
+    permissions = db.relationship('Permission', secondary=roles_permissions, back_populates='roles')
+
+    @staticmethod
+    def init_role():
+        roles_permissions_map = {
+            'Locked': ['FOLLOW', 'COLLECT'],
+            'User': ['FOLLOW', 'COLLECT','COMMENT','UPLOAD'],
+            'Moderator':['FOLLOW','COLLECT','COMMENT','UPLOAD','MODERATE'],
+            'Administrator':['FOLLOW','COLLECT','COMMENT','UPLOAD','MODERATE','ADMINISTER']
+        }
+
+        for role_name in roles_permissions_map:
+            role = Role.query.filter_by(name=role_name).first()
+            if role is None:
+                role = Role(name=role_name)
+                db.session.add(role)
+            role.permissions = []
+            for permission_name in roles_permissions_map[role_name]:
+                permission = Permission.query.filter_by(name=permission_name).first()
+                if permission is None:
+                    permission = Permission(name=permission_name)
+                    db.session.add(permission)
+                role.permissions.append(permission)
+        db.session.commit()
+
+
+#photo和user的第三张表，可存储记录时间戳
+#两个主键，联合唯一
+class Collect(db.Model):
+    collector_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    collected_id = db.Column(db.Integer, db.ForeignKey('photo.id'), primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    collector = db.relationship('User', back_populates='collections', lazy='joined') #lazy设为joined或者False,表示用连结查询，提高性能，减少一次查询
+    collected = db.relationship('Photo', back_populates='collectors', lazy='joined')
