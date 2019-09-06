@@ -1,0 +1,55 @@
+from datetime import datetime
+from sites.extensions import db
+
+
+#分类
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(30), unique=True)
+    posts = db.relationship('Post', back_populates='category')
+
+    def delete(self):
+        default_category = Category.query.get(1)
+        posts = self.posts[:]
+        for post in posts:
+            post.category = default_category
+        db.session.delete(self)
+        db.session.commit()
+
+#文章
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(60))
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    can_comment = db.Column(db.Boolean, default=True)
+    # slug = db.Column(db.String(60))
+
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+
+    category = db.relationship('Category', back_populates='posts')
+    comments = db.relationship('PostComment', back_populates='post', cascade='all, delete-orphan')
+
+
+#评论
+class PostComment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    flag = db.Column(db.Integer, default=0)  # 举报次数
+
+    replied_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    photo_id = db.Column(db.Integer, db.ForeignKey('photo.id'))
+
+    post = db.relationship('Post', back_populates='comments')
+    author = db.relationship('User', back_populates='comments')
+    replies = db.relationship('Comment', back_populates='replied', cascade='all')
+    replied = db.relationship('Comment', back_populates='replies', remote_side=[id])
+
+
+#链接
+# class Link(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(30))
+#     url = db.Column(db.String(255))

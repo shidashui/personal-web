@@ -7,10 +7,10 @@ from sites.extensions import whooshee, db
 
 
 
-class Item(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    item_key = db.Column(db.Integer)   #[(0,Photo),(1,Post)]
-    item_id = db.Column(db.Integer)
+# class Item(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     item_key = db.Column(db.Integer)   #[(0,Photo),(1,Post)]
+#     item_id = db.Column(db.Integer)
 
 
 tagging = db.Table('tagging',
@@ -32,7 +32,7 @@ class Photo(db.Model):
 
     flag = db.Column(db.Integer, default=0)  #被举报次数
     can_comment = db.Column(db.Boolean, default=True)
-    comments = db.relationship('Comment', back_populates='photo', cascade='all')
+    comments = db.relationship('PhotoComment', back_populates='photo', cascade='all')
     tags = db.relationship('Tag', secondary=tagging, back_populates='photos')
     collectors = db.relationship('Collect', back_populates='collected', cascade='all')
 
@@ -44,7 +44,7 @@ class Tag(db.Model):
     photos = db.relationship('Photo', secondary=tagging, back_populates='tags')
 
 
-class Comment(db.Model):
+class PhotoComment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
@@ -80,3 +80,4 @@ def delete_photos(**kwargs):
         path = os.path.join(current_app.config['ALBUMY_UPLOAD_PATH'], filename)
         if os.path.exists(path):
             os.remove(path)
+
