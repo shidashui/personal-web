@@ -52,7 +52,13 @@ class User(db.Model, UserMixin):
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
     role = db.relationship('Role', back_populates='users')
     photos = db.relationship('Photo', back_populates='author', cascade='all') #级联设为all，用户被删除，相应图片全删除
-    comments = db.relationship('Comment', back_populates='author', cascade='all')
+    photo_comments = db.relationship('PhotoComment', back_populates='author', cascade='all')
+
+    posts = db.relationship('Post', back_populates='author', cascade='all')
+    post_comments = db.relationship('PostComment', back_populates='author', cascade='all')
+
+    categories = db.relationship('Category', back_populates='author', cascade='all')
+
     collections = db.relationship('Collect', back_populates='collector', cascade='all')
 
     following = db.relationship('Follow', foreign_keys=[Follow.follower_id], back_populates='follower',

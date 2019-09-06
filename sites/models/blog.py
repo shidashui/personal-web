@@ -8,6 +8,9 @@ class Category(db.Model):
     name = db.Column(db.String(30), unique=True)
     posts = db.relationship('Post', back_populates='category')
 
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    author = db.relationship('User', back_populates='categories')
+
     def delete(self):
         default_category = Category.query.get(1)
         posts = self.posts[:]
@@ -24,6 +27,11 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     can_comment = db.Column(db.Boolean, default=True)
     # slug = db.Column(db.String(60))
+
+    flag = db.Column(db.Integer, default=0)  #被举报次数
+
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    author = db.relationship('User', back_populates='photos')
 
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
 
