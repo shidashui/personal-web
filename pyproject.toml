@@ -16,6 +16,7 @@ flask-dropzone = "^1.5"
 flask-wtf = "^0.14.2"
 flask-avatars = "^0.2.2"
 flask-whooshee = "^0.7.0"
+python-dotenv = "^0.10.3"
 
 [tool.poetry.dev-dependencies]
 

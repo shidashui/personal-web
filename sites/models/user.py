@@ -5,8 +5,9 @@ from flask_avatars import Identicon
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from sites.models.photo import Photo
 from sites.extensions import whooshee, db
+from sites.models import *
+
 
 
 #用户关注第三张表
@@ -21,6 +22,8 @@ class Follow(db.Model):
 
 @whooshee.register_model('username', 'name')
 class User(db.Model, UserMixin):
+    __tablename__ = 'user'
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, index=True)
     email = db.Column(db.String(254), unique=True, index=True)
@@ -144,6 +147,7 @@ class User(db.Model, UserMixin):
         return self.followers.filter_by(follower_id=user.id).first() is not None
 
     def followed_photos(self):
+        from sites.models.photo import Photo
         return Photo.query.join(Follow, Follow.followed_id == Photo.author_id).filter(Follow.follower_id == self.id)
 
     #用户锁定

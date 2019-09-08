@@ -4,7 +4,7 @@ from datetime import datetime
 from flask import current_app
 
 from sites.extensions import whooshee, db
-
+from sites.models import *
 
 
 # class Item(db.Model):
@@ -45,19 +45,20 @@ class Tag(db.Model):
 
 
 class PhotoComment(db.Model):
+    __tablename__ = 'photo_comment'
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     flag = db.Column(db.Integer, default=0)  #举报次数
 
-    replied_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
+    replied_id = db.Column(db.Integer, db.ForeignKey('photo_comment.id'))
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     photo_id = db.Column(db.Integer, db.ForeignKey('photo.id'))
 
     photo = db.relationship('Photo', back_populates='comments')
     author = db.relationship('User', back_populates='comments')
-    replies = db.relationship('Comment', back_populates='replied', cascade='all')
-    replied = db.relationship('Comment', back_populates='replies', remote_side=[id])
+    replies = db.relationship('PhotoComment', back_populates='replied', cascade='all')
+    replied = db.relationship('PhotoComment', back_populates='replies', remote_side=[id])
 
 
 

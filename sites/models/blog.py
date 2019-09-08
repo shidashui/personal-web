@@ -1,6 +1,9 @@
 from datetime import datetime
 from sites.extensions import db
 
+from sites.models import *
+
+
 
 #分类
 class Category(db.Model):
@@ -41,19 +44,20 @@ class Post(db.Model):
 
 #评论
 class PostComment(db.Model):
+    __tablename__ = 'post_comment'
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     flag = db.Column(db.Integer, default=0)  # 举报次数
 
-    replied_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
+    replied_id = db.Column(db.Integer, db.ForeignKey('post_comment.id'))
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     photo_id = db.Column(db.Integer, db.ForeignKey('photo.id'))
 
     post = db.relationship('Post', back_populates='comments')
     author = db.relationship('User', back_populates='comments')
-    replies = db.relationship('Comment', back_populates='replied', cascade='all')
-    replied = db.relationship('Comment', back_populates='replies', remote_side=[id])
+    replies = db.relationship('PostComment', back_populates='replied', cascade='all')
+    replied = db.relationship('PostComment', back_populates='replies', remote_side=[id])
 
 
 #链接

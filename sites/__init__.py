@@ -1,18 +1,21 @@
 import os
 
+import click
 from flask import Flask, render_template
 from flask_login import current_user
 from flask_wtf.csrf import CSRFError
 
-from extensions import bootstrap, db, login_manager, moment, mail, dropzone, csrf, avatars, whooshee
-from settings import config
+from sites.extensions import bootstrap, db, login_manager, moment, mail, dropzone, csrf, avatars, whooshee
+from sites.settings import config
+
+from sites.models.photo import Notification
 
 
 def create_app(config_name=None):
     if config_name is None:
         config_name = os.getenv('FLASK_CONFIG', 'development')
 
-    app = Flask('albumy')
+    app = Flask('CoderShui')
 
     app.config.from_object(config[config_name])
 
@@ -39,12 +42,12 @@ def register_extensions(app):
 
 
 def register_blueprints(app):
-    app.register_blueprint(main_bp)
-    app.register_blueprint(user_bp, url_prefix='/user')
-    app.register_blueprint(auth_bp, url_prefix='/auth')
-    app.register_blueprint(admin_bp, url_prefix='/admin')
-    app.register_blueprint(ajax_bp, url_prefix='/ajax')
-
+    # app.register_blueprint(main_bp)
+    # app.register_blueprint(user_bp, url_prefix='/user')
+    # app.register_blueprint(auth_bp, url_prefix='/auth')
+    # app.register_blueprint(admin_bp, url_prefix='/admin')
+    # app.register_blueprint(ajax_bp, url_prefix='/ajax')
+    pass
 
 def register_shell_context(app):
     # @app.shell_context_processor
@@ -93,4 +96,12 @@ def register_errorhandlers(app):
 
 
 def register_commands(app):
-    pass
+    @app.cli.command()
+    @click.option('--drop', is_flag=True, help='先删除后创建')
+    def initdb(drop):
+        if drop:
+            click.confirm('此操作会删除数据库，确认？',abort=True)
+            db.drop_all()
+            click.echo('删除表')
+        db.create_all()
+        click.echo('初始化数据库')
