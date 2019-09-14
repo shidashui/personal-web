@@ -1,9 +1,6 @@
-import os
-from datetime import datetime
 
 from flask import current_app
 
-from sites.extensions import whooshee, db
 from sites.models import *
 
 
@@ -56,7 +53,7 @@ class PhotoComment(db.Model):
     photo_id = db.Column(db.Integer, db.ForeignKey('photo.id'))
 
     photo = db.relationship('Photo', back_populates='comments')
-    author = db.relationship('User', back_populates='comments')
+    author = db.relationship('User', back_populates='photo_comments')
     replies = db.relationship('PhotoComment', back_populates='replied', cascade='all')
     replied = db.relationship('PhotoComment', back_populates='replies', remote_side=[id])
 

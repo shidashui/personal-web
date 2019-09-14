@@ -1,11 +1,9 @@
-from datetime import datetime
 
 from flask import current_app
 from flask_avatars import Identicon
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from sites.extensions import whooshee, db
 from sites.models import *
 
 

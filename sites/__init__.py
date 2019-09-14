@@ -5,6 +5,7 @@ from flask import Flask, render_template
 from flask_login import current_user
 from flask_wtf.csrf import CSRFError
 
+from sites.models.user import Role
 from sites.extensions import bootstrap, db, login_manager, moment, mail, dropzone, csrf, avatars, whooshee
 from sites.settings import config
 
@@ -104,4 +105,5 @@ def register_commands(app):
             db.drop_all()
             click.echo('删除表')
         db.create_all()
+        Role.init_role()
         click.echo('初始化数据库')

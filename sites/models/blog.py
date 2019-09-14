@@ -1,5 +1,3 @@
-from datetime import datetime
-from sites.extensions import db
 
 from sites.models import *
 
@@ -34,7 +32,7 @@ class Post(db.Model):
     flag = db.Column(db.Integer, default=0)  #被举报次数
 
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    author = db.relationship('User', back_populates='photos')
+    author = db.relationship('User', back_populates='posts')
 
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
 
@@ -52,10 +50,10 @@ class PostComment(db.Model):
 
     replied_id = db.Column(db.Integer, db.ForeignKey('post_comment.id'))
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    photo_id = db.Column(db.Integer, db.ForeignKey('photo.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
 
     post = db.relationship('Post', back_populates='comments')
-    author = db.relationship('User', back_populates='comments')
+    author = db.relationship('User', back_populates='post_comments')
     replies = db.relationship('PostComment', back_populates='replied', cascade='all')
     replied = db.relationship('PostComment', back_populates='replies', remote_side=[id])
 
