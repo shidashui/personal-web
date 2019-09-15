@@ -73,11 +73,11 @@ def confirm(token):
         return redirect(url_for('main.index'))
     else:
         flash('无效或者过期的token', 'danger')
-        return redirect(url_for('.resend_confrim_email'))
+        return redirect(url_for('.resend_confirm_email'))
 
-@auth_bp.route('/resend-confrim-email')
+@auth_bp.route('/resend-confirm-email')
 @login_required
-def resend_confrim_email():
+def resend_confirm_email():
     if current_user.confirmed:
         return redirect(url_for('main.index'))
 

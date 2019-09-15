@@ -5,6 +5,11 @@ from flask import Flask, render_template
 from flask_login import current_user
 from flask_wtf.csrf import CSRFError
 
+from sites.blueprints.admin import admin_bp
+from sites.blueprints.ajax import ajax_bp
+from sites.blueprints.main import main_bp
+from sites.blueprints.user import user_bp
+from sites.blueprints.auth import auth_bp
 from sites.models.user import Role
 from sites.extensions import bootstrap, db, login_manager, moment, mail, dropzone, csrf, avatars, whooshee
 from sites.settings import config
@@ -16,7 +21,7 @@ def create_app(config_name=None):
     if config_name is None:
         config_name = os.getenv('FLASK_CONFIG', 'development')
 
-    app = Flask('CoderShui')
+    app = Flask('sites')
 
     app.config.from_object(config[config_name])
 
@@ -43,12 +48,11 @@ def register_extensions(app):
 
 
 def register_blueprints(app):
-    # app.register_blueprint(main_bp)
-    # app.register_blueprint(user_bp, url_prefix='/user')
-    # app.register_blueprint(auth_bp, url_prefix='/auth')
-    # app.register_blueprint(admin_bp, url_prefix='/admin')
-    # app.register_blueprint(ajax_bp, url_prefix='/ajax')
-    pass
+    app.register_blueprint(main_bp)
+    app.register_blueprint(user_bp, url_prefix='/user')
+    app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(admin_bp, url_prefix='/admin')
+    app.register_blueprint(ajax_bp, url_prefix='/ajax')
 
 def register_shell_context(app):
     # @app.shell_context_processor
@@ -79,7 +83,7 @@ def register_errorhandlers(app):
 
     @app.errorhandler(404)
     def page_not_fount(e):
-        return  render_template('errors/404.html'), 404
+        return render_template('errors/404.html'), 404
 
     @app.errorhandler(413)
     def request_entity_too_large(e):
@@ -87,7 +91,7 @@ def register_errorhandlers(app):
 
     @app.errorhandler(500)
     def internal_server_error(e):
-        return  render_template('errors/500.html'), 500
+        return render_template('errors/500.html'), 500
 
     @app.errorhandler(CSRFError)
     def handle_csrf_error(e):
