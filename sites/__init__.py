@@ -1,7 +1,9 @@
+import logging
 import os
+from logging.handlers import RotatingFileHandler, SMTPHandler
 
 import click
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_login import current_user
 from flask_wtf.csrf import CSRFError
 
@@ -12,7 +14,7 @@ from sites.blueprints.user import user_bp
 from sites.blueprints.auth import auth_bp
 from sites.models.user import Role
 from sites.extensions import bootstrap, db, login_manager, moment, mail, dropzone, csrf, avatars, whooshee
-from sites.settings import config
+from sites.settings import config, basedir
 
 from sites.models.photo import Notification
 
@@ -31,6 +33,7 @@ def create_app(config_name=None):
     register_errorhandlers(app)
     register_shell_context(app)
     register_template_context(app)
+    register_logging(app)
 
     return app
 
@@ -111,3 +114,37 @@ def register_commands(app):
         db.create_all()
         Role.init_role()
         click.echo('初始化数据库')
+
+
+def register_logging(app):
+    # app.logger.setLevel(logging.INFO)
+    class RequestFormatter(logging.Formatter):
+        def format(self,record):
+            record.url = request.url
+            record.remote_addr = request.remote_addr
+
+    request_formatter = RequestFormatter(
+        '[%(asctime)s] %(remote_addr)s requested %(url)s\n'
+        '%(levelname)s in %(module)s: %(message)s'
+    )
+
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    file_handler = RotatingFileHandler(os.path.join(basedir,'logs/sites.log'), maxBytes=10*1024*1024, backupCount=10)
+    file_handler.setFormatter(formatter)
+    file_handler.setLevel(logging.INFO)
+
+
+    mail_handler = SMTPHandler(
+        mailhost=app.config['MAIL_SERVER'],
+        fromaddr=app.config['MAIL_USERNAME'],
+        toaddrs=['MAIL_USERNAME'],
+        subject='personal-web site Error',
+        credentials=(app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
+    )
+    mail_handler.setLevel(logging.ERROR)
+    mail_handler.setFormatter(request_formatter)
+
+    if not app.debug:
+        app.logger.addHandler(file_handler)
+        app.logger.addHandler(mail_handler)

@@ -3,6 +3,7 @@ import os
 import sys
 
 basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+# print(basedir)
 
 WIN = sys.platform.startswith('win')
 if WIN:
@@ -18,6 +19,8 @@ class Operations:
 
 
 class BaseConfig:
+    # FLASK_DEBUG = 0
+
     ALBUMY_ADMIN_EMAIL = os.getenv('EMAIL', '164635470@qq.com')
     ALBUMY_PHOTO_PER_PAGE = 12
     ALBUMY_COMMENT_PER_PAGE = 20
@@ -39,7 +42,7 @@ class BaseConfig:
     }
 
     SECRET_KEY = os.getenv('SECRET_KEY', 'secret string')
-    MAX_CONTENT_LENGTH = 3*1024*1024 #文件超3mb返回413
+    MAX_CONTENT_LENGTH = 5*1024*1024 #文件超3mb返回413
 
     BOOTSTRAP_SERVE_LOCAL = True #BOOTSTRAP_SERVE_LOCAL = True
 
