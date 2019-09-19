@@ -62,7 +62,7 @@ class BaseConfig:
 
     #文件上传插件配置flask-Dropzone
     DROPZONE_ALLOWED_FILE_TYPE = 'image'    #允许的文件类型
-    DROPZONE_MAX_FILE_SIZE = 3              #文件最大体积，单位mb
+    DROPZONE_MAX_FILE_SIZE = 5              #文件最大体积，单位mb
     DROPZONE_MAX_FILES = 30                 #单次上传最大数量
     DROPZONE_ENABLE_CSRF = True             #开启csrf保护
 

@@ -6,10 +6,10 @@ from sites.models import *
 #分类
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(30), unique=True)
+    name = db.Column(db.String(30), primary_key=True)
     posts = db.relationship('Post', back_populates='category')
 
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     author = db.relationship('User', back_populates='categories')
 
     def delete(self):

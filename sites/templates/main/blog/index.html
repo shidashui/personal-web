@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+
+{% block title %}博客{% endblock %}
+
+
+{% block content %}
+    {% if current_user.is_authenticated %}
+        <div class="row justify-content-md-center">
+            <div class="col-md-8">
+
+                {% if posts %}
+                    {% for post in posts %}
+                        <h3 class="text-primary"><a href="#">{{post.title}}</a> </h3>
+                        <p>
+                            {{post.body|striptags|truncate}}
+                            <small><a href="#">阅读更多</a> </small>
+                        </p>
+                        <small>
+                            评论: <a href="#">{{post.comments|length}}</a>
+                            分类: <a href="#">{{post.category.name}}</a>
+                            <span class="float-right">{{moment(post.timestamp).format('LL')}}</span>
+                        </small>
+                        {%if not loop.last%}
+                            <hr>
+                        {% endif%}
+                    {% endfor%}
+                {% else%}
+                    <div class="tip">
+                        <h5>没有更多文章了</h5>
+                        {% if current_user.is_authenticated %}
+                            <a href="#">添加文章</a>
+                        {% endif%}
+                    </div>
+                {% endif%}
+
+                {% if posts %}
+                    {{ render_pagination(pagination, align='center') }}
+                {% endif %}
+
+            </div>
+            <div class="col-md-3">
+                {% include 'main/_sidebar.html' %}
+            </div>
+        </div>
+
+    {% else %}
+        <div class="jumbotron">
+            <div class="row">
+                <div class="col-md-8">
+                    <img src="{{ url_for('static', filename='images/index.jpg') }}" class="rounded img-fluid">
+                </div>
+                <div class="col-md-4 align-self-center">
+                    <h1>Albumy</h1>
+                    <p>Capture and remember every wonderful moment.</p>
+                    <p><a class="btn btn-primary btn-lg" href="{{ url_for('auth.register') }}">Join Now</a></p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

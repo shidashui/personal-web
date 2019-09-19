@@ -13,7 +13,7 @@ from sites.blueprints.main import main_bp
 from sites.blueprints.user import user_bp
 from sites.blueprints.auth import auth_bp
 from sites.models.user import Role
-from sites.extensions import bootstrap, db, login_manager, moment, mail, dropzone, csrf, avatars, whooshee
+from sites.extensions import bootstrap, db, login_manager, moment, mail, dropzone, csrf, avatars, whooshee, migrate
 from sites.settings import config, basedir
 
 from sites.models.photo import Notification
@@ -48,6 +48,7 @@ def register_extensions(app):
     csrf.init_app(app)
     avatars.init_app(app)
     whooshee.init_app(app)
+    migrate.init_app(app)
 
 
 def register_blueprints(app):

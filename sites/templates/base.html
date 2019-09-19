@@ -31,6 +31,10 @@
                     <div class="navbar-nav mr-auto">
                         {{ render_nav_item('main.index', '首页')}}
                         {{ render_nav_item('main.explore', '探索')}}
+                        {{ render_nav_item('main.blog_index', '博客')}}
+
+                        <!--<a class="nav-item nav-link " href="#">博客</a>-->
+
                         <form class="form-inline my-2 my-lg-0" action="{{ url_for('main.search') }}">
                             <input type="text" name="q" class="form-control mr-sm-1" placeholder="图片、标签、用户" required>
                             <button class="btn btn-light my-2 my-sm-0" type="submit">
@@ -97,9 +101,9 @@
                 <footer>
                     <p class="float-left">
                         <small>&copy; 2019
-                            <a href="http://greyli.com" title="Written by Grey Li">Copy By CoderShui</a>
+                            <!--<a href="http://greyli.com" title="Written by Grey Li">Copy By CoderShui</a>-->
                             <a href="https://github.com/shidashui" title="Fork me on GitHub">GitHub</a>
-                            <a href="http://helloflask.com" title="A HelloFlask project">HelloFlask</a>
+                            <!--<a href="http://helloflask.com" title="A HelloFlask project">HelloFlask</a>-->
                         </small>
                     </p>
                     <p class="float-right">
@@ -117,6 +121,7 @@
     <script src="{{url_for('static', filename='js/popper.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
     {{ moment.include_moment(local_js=url_for('static', filename='js/moment-with-locales.min.js')) }}
+    {{ moment.locale('zh-cn') }}
     <script src="{{url_for('static', filename='js/script.js')}}"></script>
     <script type="text/javascript">
         var csrf_token = "{{ csrf_token() }}";
