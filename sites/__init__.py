@@ -7,6 +7,7 @@ from flask import Flask, render_template, request
 from flask_login import current_user
 from flask_wtf.csrf import CSRFError
 
+from sites.models.blog import Category
 from sites.blueprints.admin import admin_bp
 from sites.blueprints.ajax import ajax_bp
 from sites.blueprints.main import main_bp
@@ -71,9 +72,11 @@ def register_template_context(app):
     def make_template_context():
         if current_user.is_authenticated:
             notification_count = Notification.query.with_parent(current_user).filter_by(is_read=False).count()
+            categories = Category.query.filter_by(author_id=current_user.id).order_by(Category.name).all()
         else:
             notification_count = None
-        return dict(notification_count=notification_count)
+            categories = None
+        return dict(notification_count=notification_count, categories=categories)
 
 
 def register_errorhandlers(app):

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+
+{% block title %}{{ user.name }}{% endblock %}
+
+
+{% block content %}
+    {% include 'user/_header.html' %}
+
+        <div class="row">
+            <div class="col-sm-8">
+                {% include 'main/blog/_posts.html' %}
+            </div>
+            <div class="col-sm-4 sidebar">
+                {% include 'main/blog/_sidebar.html' %}
+            </div>
+        </div>
+
+    {% if blogs %}
+        <div class="page-footer">
+            {{ render_pagination(pagination, align='center') }}
+        </div>
+    {% endif %}
+{% endblock %}

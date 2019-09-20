@@ -1,9 +1,11 @@
-
 from flask import current_app
+from datetime import datetime
+import os
+
 from flask_avatars import Identicon
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from sites.extensions import whooshee, db
 from sites.models import *
 
 
@@ -74,6 +76,14 @@ class User(db.Model, UserMixin):
         self.generate_avatar()
         self.follow(self) #follow self
         self.set_role()
+        self.default_category()
+
+    #创建默认文章分类
+    def default_category(self):
+        category = Category(name='默认分类',author=self)
+        db.session.add(category)
+        db.session.commit()
+
 
     def generate_avatar(self):
         avatar = Identicon()

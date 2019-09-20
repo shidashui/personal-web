@@ -14,14 +14,30 @@
         </div>
         <a class="card-link" href="{{ url_for('user.index', username=current_user.username) }}">
             <span class="oi oi-home"></span>我的图片
-        </a><br>
+        </a>
+        <br>
         <a class="card-link" href="{{ url_for('user.show_collections', username=current_user.username) }}">
             <span class="oi oi-star"></span>我的收藏
+        </a>
+        <br>
+        <a class="card-link" href="#">
+            <span class="oi oi-book"></span>我的文章
         </a>
     </div>
 </div>
 <div class="card bg-light mb-3 w-100">
-    <div class="card-header">热门标签</div>
+    <div class="card-header">热门图片标签</div>
+    <div class="list-group">
+        {% for tag in tags %}
+            <a class="list-group-item" href="{{ url_for('.show_tag', tag_id=tag.id) }}">{{ tag.name }}
+                <span class="badge badge-pill">{{ tag.photos|length }}</span>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="card bg-light mb-3 w-100">
+    <div class="card-header">热门文章标签</div>
     <div class="list-group">
         {% for tag in tags %}
             <a class="list-group-item" href="{{ url_for('.show_tag', tag_id=tag.id) }}">{{ tag.name }}

@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, current_app, flash, redirect, url_for
 from flask_login import login_required, current_user, fresh_login_required, logout_user
 
+from sites.models.blog import Post
 from sites.emails import send_confirm_email
 from sites.extensions import db,avatars
 from sites.decorators import confirm_required, permission_required
@@ -30,6 +31,15 @@ def index(username):
     photos = pagination.items
 
     return render_template('user/index.html', user=user, pagination=pagination, photos=photos)
+
+@user_bp.route('/<username>/blogs')
+def show_blogs(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['ALBUMY_PHOTO_PER_PAGE']
+    pagination = Post.query.with_parent(user).order_by(Post.timestamp.desc()).paginate(page, per_page)
+    blogs = pagination.items
+    return render_template('user/blogs.html', user=user, pagination=pagination, blogs=blogs)
 
 
 @user_bp.route('/<username>/collections')

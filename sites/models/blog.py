@@ -1,3 +1,8 @@
+from datetime import datetime
+
+from sqlalchemy import UniqueConstraint
+
+from sites.extensions import db
 
 from sites.models import *
 
@@ -5,12 +10,22 @@ from sites.models import *
 
 #分类
 class Category(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(30), primary_key=True)
+    #联合唯一索引
+    __table_args__ = (
+        UniqueConstraint(
+            'name',
+            'author_id',
+            name='author_category_unique'
+        ),
+    )
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(30))
     posts = db.relationship('Post', back_populates='category')
 
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     author = db.relationship('User', back_populates='categories')
+
+
 
     def delete(self):
         default_category = Category.query.get(1)
