@@ -69,6 +69,15 @@ class BaseConfig:
     WHOOSHEE_MIN_STRING_LEN = 1             #最小搜索字符，默认为3
 
 
+    #ckeditor
+    CKEDITOR_ENABLE_CSRF = True         #是否开启csrf保护
+    CKEDITOR_FILE_UPLOADER = 'main.upload_image'  #设置视图函数的url或端点值  包含图片
+    BLOG_UPLOAD_PATH = os.path.join(basedir, 'uploads\\ckeditor')
+    BLOG_ALLOWED_IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+
+
+
+
 class DevelopmentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = prefix + os.path.join(basedir, 'Albumy-data.db')
     REDIS_URL = "redis://localhost"

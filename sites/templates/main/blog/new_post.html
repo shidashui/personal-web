@@ -1,0 +1,22 @@
+{% extends 'main/blog/new_base.html' %}
+{% from 'bootstrap/form.html' import render_form %}
+
+
+{% block title %}添加新文章{% endblock %}
+
+
+{% block blogs_content %}
+    <div class="card w-100 bg-light">
+        <h3 class="card-header">新的文章</h3>
+        <div class="card-body">
+            {{ render_form(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
+    <script type="text/javascript" src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
+    {{ ckeditor.config(name='body') }}
+{% endblock %}

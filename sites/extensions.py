@@ -1,5 +1,6 @@
 from flask_avatars import Avatars
 from flask_bootstrap import Bootstrap
+from flask_ckeditor import CKEditor
 from flask_dropzone import Dropzone
 from flask_login import LoginManager, AnonymousUserMixin
 from flask_mail import Mail
@@ -20,6 +21,7 @@ csrf = CSRFProtect()
 avatars = Avatars()
 whooshee = Whooshee()
 migrate = Migrate(db=db)
+ckeditor = CKEditor()
 
 
 @login_manager.user_loader

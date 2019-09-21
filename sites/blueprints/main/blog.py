@@ -1,11 +1,14 @@
-from flask import render_template, request, current_app, flash, redirect
+import os
+
+from flask import render_template, request, current_app, flash, redirect, url_for, send_from_directory
+from flask_ckeditor import upload_fail, upload_success
 from flask_login import current_user
 
 from sites.extensions import db
-from sites.forms.blog import CategoryForm
+from sites.forms.blog import CategoryForm, PostForm
 from sites.models.blog import Post, Category
 from sites.blueprints.main import main_bp
-
+from sites.utils import allowed_file
 
 
 @main_bp.route('/blogs')
@@ -34,4 +37,29 @@ def new_category():
 #创建文章
 @main_bp.route('/post/new', methods=['GET', 'POST'])
 def new_post():
-    pass
+    form = PostForm()
+    if form.validate_on_submit():
+        title = form.title.data
+        body = form.body.data
+        category = Category.query.get(form.category.data)
+        author = current_user._get_current_object()
+        post = Post(title=title,body=body, category=category, author=author)
+        db.session.add(post)
+        db.session.commit()
+        flash('文章已创建', 'success')
+        # return redirect(url_for(''))
+    return render_template('main/blog/new_post.html', form=form)
+
+#ckeditor图片上传
+@main_bp.route('/blog_img', methods=['POST'])
+def upload_image():
+    f = request.files.get('upload')
+    if not allowed_file(f.filename):
+        return upload_fail('只允许图片')
+    f.save(os.path.join(current_app.config['BLOG_UPLOAD_PATH'], f.filename))
+    url = url_for('.get_ck_image', filename=f.filename)
+    return upload_success(url, f.filename)
+
+@main_bp.route('/blog_img/<path:filename>')
+def get_ck_image(filename):
+    return send_from_directory(current_app.config['BLOG_UPLOAD_PATH'], filename)

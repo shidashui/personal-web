@@ -50,12 +50,27 @@
                                       class="{% if notification_count == 0 %}hide{% endif %} badge badge-danger badge-notification"
                                       data-href="{{ url_for('ajax.notifications_count') }}">{{ notification_count }}</span>
                             </a>
-                            <a class="nav-item nav-link" href="{{ url_for('main.upload') }}" title="Upload">
-                                <span class="oi oi-cloud-upload"></span>&nbsp;&nbsp;
-                            </a>
+                            <!--<a class="nav-item nav-link" href="{{ url_for('main.upload') }}" title="Upload">-->
+                                <!--<span class="oi oi-cloud-upload"></span>&nbsp;&nbsp;-->
+                            <!--</a>-->
+
                             <div class="dropdown nav-item">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-{#                                    {{ current_user.name }}<span class="caret"></span>#}
+                                    <span class="oi oi-cloud-upload"></span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                    <a class="dropdown-item" href="{{ url_for('main.upload') }}" title="Upload">
+                                        <span class="oi oi-cloud-upload"></span> 上传图片
+                                    </a>
+                                    <a class="dropdown-item" href="{{ url_for('main.new_category') }}" title="Upload">
+                                        <span class="oi oi-cloud-upload"></span> 博客管理
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="dropdown nav-item">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                    {{ current_user.name }}<span class="caret"></span>
                                     <img class="avatar-xs" src="{{ url_for('main.get_avatar',filename=current_user.avatar_s) }}">
                                     <span class="caret"></span>
                                 </a>

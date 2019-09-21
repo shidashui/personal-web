@@ -97,3 +97,7 @@ def resize_image(image, filename, base_width):
     filename += current_app.config['ALBUMY_PHOTO_SUFFIX'][base_width] + ext
     img.save(os.path.join(current_app.config['ALBUMY_UPLOAD_PATH'], filename), optimize=True, quality=85)  #optimize是否压缩，quality压缩质量
     return filename
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['BLOG_ALLOWED_IMAGE_EXTENSIONS']
