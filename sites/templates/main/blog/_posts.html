@@ -18,7 +18,7 @@
     <div class="tip">
         <h5>没有更多文章了</h5>
         {% if current_user.is_authenticated %}
-            <a href="#">添加文章</a>
+            <a href="{{ url_for('main.new_post') }}">添加文章</a>
         {% endif%}
     </div>
 {% endif%}

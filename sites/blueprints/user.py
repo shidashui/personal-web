@@ -38,8 +38,8 @@ def show_blogs(username):
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['ALBUMY_PHOTO_PER_PAGE']
     pagination = Post.query.with_parent(user).order_by(Post.timestamp.desc()).paginate(page, per_page)
-    blogs = pagination.items
-    return render_template('user/blogs.html', user=user, pagination=pagination, blogs=blogs)
+    posts = pagination.items
+    return render_template('user/blogs.html', user=user, pagination=pagination, posts=posts)
 
 
 @user_bp.route('/<username>/collections')
