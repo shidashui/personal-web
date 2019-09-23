@@ -11,7 +11,7 @@
         <div class="col-sm-8">
             {% if posts %}
                 {% for post in posts %}
-                    <h3 class="text-primary"><a href="#">{{post.title}}</a> </h3>
+                    <h3 class="text-primary"><a href="{{ url_for('main.show_post', post_id=post.id) }}">{{post.title}}</a> </h3>
                     <small>
                         评论: <a href="#">{{post.comments|length}}</a>
                         分类: <a href="#">{{post.category.name}}</a>

@@ -6,7 +6,7 @@ from flask_login import current_user
 
 from sites.extensions import db
 from sites.forms.blog import CategoryForm, PostForm
-from sites.models.blog import Post, Category
+from sites.models.blog import Post, Category, PostComment
 from sites.blueprints.main import main_bp
 from sites.utils import allowed_file
 
@@ -47,7 +47,7 @@ def new_post():
         db.session.add(post)
         db.session.commit()
         flash('文章已创建', 'success')
-        # return redirect(url_for(''))
+        return redirect(url_for('.show_post', post_id=post.id))
     return render_template('main/blog/new_post.html', form=form)
 
 #ckeditor图片上传
@@ -63,3 +63,15 @@ def upload_image():
 @main_bp.route('/blog_img/<path:filename>')
 def get_ck_image(filename):
     return send_from_directory(current_app.config['BLOG_UPLOAD_PATH'], filename)
+
+
+#文章显示
+@main_bp.route('/post/<int:post_id>', methods=['GET','POST'])
+def show_post(post_id):
+    post = Post.query.get_or_404(post_id)
+
+    # page = request.args.get('page', 1, type=int)
+    # per_page = current_app.config['ALBUMY_COMMENT_PER_PAGE']
+    # pagination = PostComment.query.with_parent(post).filter_by(reviewed=True).order_by(PostComment.timestamp.asc()).paginate(page,per_page)
+    # comments = pagination.items
+    return render_template('main/blog/post.html', post=post)
