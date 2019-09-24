@@ -20,7 +20,7 @@
             <span class="oi oi-star"></span>我的收藏
         </a>
         <br>
-        <a class="card-link" href="#">
+        <a class="card-link" href="{{ url_for('user.show_blogs', username=current_user.username, category_id=0) }}">
             <span class="oi oi-book"></span>我的文章
         </a>
     </div>

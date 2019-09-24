@@ -1,11 +1,24 @@
 {% extends 'base.html' %}
 {% from 'bootstrap/pagination.html' import render_pagination %}
+{% from 'bootstrap/nav.html' import render_nav_item %}
+
 
 {% block title %}{{ user.name }}{% endblock %}
 
 
 {% block content %}
     {% include 'user/_header.html' %}
+    {% if category %}
+        <div class="page-header">
+            <h2>当前分类: {{ category.name }}</h2>
+            <p class="text-muted">{{ category.posts|length }} 篇文章</p>
+        </div>
+    {% else %}
+        <div class="page-header">
+            <h2>所有文章</h2>
+            <!--<p class="text-muted">{{ posts|length }} 篇文章</p>-->
+        </div>
+    {% endif %}
 
     <div class="row">
         <div class="col-sm-8">
