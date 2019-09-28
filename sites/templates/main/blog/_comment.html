@@ -99,7 +99,7 @@
                         <img class="rounded img-fluid avatar-s" src="{{ url_for('main.get_avatar', filename=current_user.avatar_m) }}">
                     </div>
                     <div class="comment-form" id="comment-form">
-                        {{ render_form(comment_form, action=url_for('.new_comment', post_id=post.id, page=pagination.pages or 1,
+                        {{ render_form(comment_form, action=url_for('.new_post_comment', post_id=post.id, page=pagination.pages or 1,
                                 reply=request.args.get('reply')), extra_classes="text-right") }}
                     </div>
                 </div>

@@ -2,8 +2,9 @@ import os
 
 from flask import render_template, request, current_app, flash, redirect, url_for, send_from_directory
 from flask_ckeditor import upload_fail, upload_success
-from flask_login import current_user
+from flask_login import current_user, login_required
 
+from sites.decorators import permission_required
 from sites.forms.main import CommentForm
 from sites.extensions import db
 from sites.forms.blog import CategoryForm, PostForm
@@ -13,6 +14,7 @@ from sites.utils import allowed_file
 
 
 @main_bp.route('/blogs')
+@login_required
 def blog_index():
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['ALBUMY_PHOTO_PER_PAGE']
@@ -23,6 +25,7 @@ def blog_index():
 
 #文章分类
 @main_bp.route('/category/new', methods=['GET', 'POST'])
+@login_required
 def new_category():
     form = CategoryForm()
     if form.validate_on_submit():
@@ -37,6 +40,7 @@ def new_category():
 
 #创建文章
 @main_bp.route('/post/new', methods=['GET', 'POST'])
+@login_required
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
@@ -53,6 +57,7 @@ def new_post():
 
 #ckeditor图片上传
 @main_bp.route('/blog_img', methods=['POST'])
+@login_required
 def upload_image():
     f = request.files.get('upload')
     if not allowed_file(f.filename):
@@ -62,12 +67,14 @@ def upload_image():
     return upload_success(url, f.filename)
 
 @main_bp.route('/blog_img/<path:filename>')
+@login_required
 def get_ck_image(filename):
     return send_from_directory(current_app.config['BLOG_UPLOAD_PATH'], filename)
 
 
 #文章显示
 @main_bp.route('/post/<int:post_id>', methods=['GET','POST'])
+@login_required
 def show_post(post_id):
     post = Post.query.get_or_404(post_id)
 
@@ -79,4 +86,14 @@ def show_post(post_id):
     comment_form = CommentForm()
     return render_template('main/blog/post.html', post=post, pagination=pagination, comment_form=comment_form)
 
-@main_bp.route('/')
+@main_bp.route('/set-post-comment/<int:post_id>', methods=['POST'])
+@login_required
+def set_post_comment(post_id):
+    pass
+
+
+@main_bp.route('/post/<int:post_id>/comment/new', methods=['POST'])
+@login_required
+@permission_required('COMMENT')
+def new_post_comment(post_id):
+    pass
