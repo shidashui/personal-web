@@ -4,6 +4,7 @@ from flask import render_template, request, current_app, flash, redirect, url_fo
 from flask_ckeditor import upload_fail, upload_success
 from flask_login import current_user
 
+from sites.forms.main import CommentForm
 from sites.extensions import db
 from sites.forms.blog import CategoryForm, PostForm
 from sites.models.blog import Post, Category, PostComment
@@ -70,8 +71,12 @@ def get_ck_image(filename):
 def show_post(post_id):
     post = Post.query.get_or_404(post_id)
 
-    # page = request.args.get('page', 1, type=int)
-    # per_page = current_app.config['ALBUMY_COMMENT_PER_PAGE']
-    # pagination = PostComment.query.with_parent(post).filter_by(reviewed=True).order_by(PostComment.timestamp.asc()).paginate(page,per_page)
-    # comments = pagination.items
-    return render_template('main/blog/post.html', post=post)
+    page = request.args.get('page', 1, type=int)
+    per_page = current_app.config['ALBUMY_COMMENT_PER_PAGE']
+    pagination = PostComment.query.with_parent(post).order_by(PostComment.timestamp.asc()).paginate(page,per_page)
+    comments = pagination.items
+
+    comment_form = CommentForm()
+    return render_template('main/blog/post.html', post=post, pagination=pagination, comment_form=comment_form)
+
+@main_bp.route('/')

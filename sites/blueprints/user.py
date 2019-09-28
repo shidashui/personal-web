@@ -7,7 +7,8 @@ from sites.extensions import db,avatars
 from sites.decorators import confirm_required, permission_required
 from sites.forms.user import EditProfileForm, UploadAvatarForm, CropAvatarForm, ChangePasswordForm, ChangeEmailForm, \
     NotificationSettingForm, PrivacySettingForm, DeleteAccountForm
-from sites.models import User, Photo, Collect
+from sites.models.user import User, Collect
+from sites.models.photo import Photo
 from sites.notifications import push_follow_notification
 from sites.settings import Operations
 from sites.utils import redirect_back, flash_errors, generate_token, validate_token
