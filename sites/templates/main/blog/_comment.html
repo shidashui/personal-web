@@ -45,7 +45,7 @@
                                     </button>
                                     <span class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                         {% if current_user != comment.author %}
-                                            <a class="dropdown-item btn" href="{{ url_for('.reply_comment', comment_id=comment.id) }}">
+                                            <a class="dropdown-item btn" href="{{ url_for('.reply_post_comment', comment_id=comment.id) }}">
                                                 <span class="oi oi-comment-square"></span> 回复
                                             </a>
                                         {% endif %}
@@ -56,7 +56,7 @@
                                             </a>
                                         {% endif %}
                                     <!--inline 表单在一条线上-->
-                                        <form class="inline" method="post" action="{{ url_for('.report_comment', comment_id=comment.id) }}">
+                                        <form class="inline" method="post" action="{{ url_for('.report_post_comment', comment_id=comment.id) }}">
                                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                             <button type="submit" class="dropdown-item">
                                                 <span class="oi oi-warning" aria-hidden="true"></span> 举报

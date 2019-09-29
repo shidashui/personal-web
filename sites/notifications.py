@@ -12,7 +12,7 @@ def push_follow_notification(follower, receiver):
     db.session.commit()
 
 
-#推送评论提醒
+#推送图片评论提醒
 def push_comment_notification(photo_id, receiver, page=1):
     message = '<a href="%s#comments">图片</a>有新的评论/回复'%(url_for('main.show_photo', photo_id=photo_id, page=page))
     notification = Notification(message=message, receiver=receiver)
