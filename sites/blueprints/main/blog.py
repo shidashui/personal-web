@@ -1,6 +1,6 @@
 import os
 
-from flask import render_template, request, current_app, flash, redirect, url_for, send_from_directory
+from flask import render_template, request, current_app, flash, redirect, url_for, send_from_directory, abort
 from flask_ckeditor import upload_fail, upload_success
 from flask_login import current_user, login_required
 
@@ -91,8 +91,18 @@ def show_post(post_id):
 @main_bp.route('/set-post-comment/<int:post_id>', methods=['POST'])
 @login_required
 def set_post_comment(post_id):
-    pass
+    post = Post.query.get_or_404(post_id)
+    if current_user != post.author:
+        abort(403)
 
+    if post.can_comment:
+        post.can_comment = False
+        flash('已禁止评论', 'info')
+    else:
+        post.can_comment = True
+        flash('可以评论', 'info')
+    db.session.commit()
+    return redirect(url_for('.show_post', post_id=post_id))
 
 #新评论
 @main_bp.route('/post/<int:post_id>/comment/new', methods=['POST'])
@@ -125,17 +135,29 @@ def new_post_comment(post_id):
 @login_required
 @confirm_required
 def report_post_comment(comment_id):
-    pass
+    comment = PostComment.query.get_or_404(comment_id)
+    comment.flag += 1
+    db.session.commit()
+    flash('已举报评论', 'success')
+    return redirect(url_for('.show_post', post_id=comment.post_id))
 
 #评论回复
 @main_bp.route('/reply/post_comment/<int:comment_id>',methods=['POST'])
 @login_required
 @permission_required('COMMENT')
 def reply_post_comment(comment_id):
-    pass
+    comment = PostComment.query.get_or_404(comment_id)
+    return redirect(url_for('.show_post', post_id = comment.post_id, reply=comment_id, author=comment.author.name)+'#comment-form')
 
 #删除评论
 @main_bp.route('/delete/post_comment/<int:comment_id>', methods=['POST'])
 @login_required
 def delete_post_comment(comment_id):
-    pass
+    comment = PostComment.query.get_or_404(comment_id)
+    if current_user != comment.author and current_user != comment.post.author:
+        abort(403)
+
+    db.session.delete(comment)
+    db.session.commit()
+    flash('已删除评论', 'info')
+    return redirect(url_for('.show_post', post_id=comment.post_id))
