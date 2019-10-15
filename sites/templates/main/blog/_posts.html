@@ -1,13 +1,13 @@
 {% if posts %}
     {% for post in posts %}
-        <h3 class="text-primary"><a href="#">{{post.title}}</a> </h3>
+        <h3 class="text-primary"><a href="{{url_for('main.show_post', post_id=post.id)}}">{{post.title}}</a> </h3>
         <p>
             {{post.body|striptags|truncate}}
-            <small><a href="#">阅读更多</a> </small>
+            <small><a href="{{url_for('main.show_post', post_id=post.id)}}">阅读更多</a> </small>
         </p>
         <small>
-            评论: <a href="#">{{post.comments|length}}</a>
-            分类: <a href="#">{{post.category.name}}</a>
+            评论: <a href="{{url_for('main.show_post',post_id=post.id)}}#comments">{{post.comments|length}}</a>
+            分类: <a href="{{url_for('user.show_blogs', username=post.author.username, category_id=post.category.id)}}">{{post.category.name}}</a>
             <span class="float-right">{{moment(post.timestamp).format('LL')}}</span>
         </small>
         {%if not loop.last%}
